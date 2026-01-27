@@ -3,12 +3,15 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   padding: 16px;
   margin: 0;
-  background: #f7f7f7;
+  background: linear-gradient(180deg, #f7f9ff 0%, #f7f7f7 100%);
 }
 
+/* --- Heading --- */
 h1 {
   margin-bottom: 16px;
   font-size: 1.6rem;
+  color: #0b3d91;
+  letter-spacing: 0.5px;
 }
 
 /* --- Lists --- */
@@ -28,6 +31,12 @@ li {
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   font-size: 1.1rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+li:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
 }
 
 /* --- Make entire row tappable --- */
@@ -40,7 +49,7 @@ input[type="checkbox"] {
   width: 28px;
   height: 28px;
   margin-right: 16px;
-  accent-color: #ff7a00;
+  accent-color: #0b63ff;
   cursor: pointer;
 }
 
@@ -74,7 +83,7 @@ th, td {
 }
 
 th {
-  background: #f0f0f0;
+  background: linear-gradient(180deg, #e9f1ff 0%, #f0f0f0 100%);
   font-weight: 600;
 }
 
@@ -92,14 +101,55 @@ button {
   border: none;
   border-radius: 12px;
   cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
 }
 
 #clearBtn {
-  background: #ccc;
+  background: #d3d3d3;
 }
 
 #submitBtn {
-  background: #ff7a00;
+  background: linear-gradient(180deg, #0b63ff 0%, #0b3d91 100%);
   color: #fff;
+}
+
+/* --- Club Branding Header --- */
+.club-header {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #0b63ff 0%, #0b3d91 100%);
+  border-radius: 14px;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+
+.club-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.club-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #fff;
+  padding: 6px;
+}
+
+.club-name {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.club-tagline {
+  font-size: 0.95rem;
+  opacity: 0.9;
 }
 
