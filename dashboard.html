@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Squad Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- BRANDING HEADER (clickable → home) -->
+    <header class="club-header">
+        <a href="index.html" class="club-brand-link">
+            <div class="club-brand">
+                <img src="images/egc-logo.jpg" alt="Club Logo" class="club-logo">
+                <div class="club-text">
+                    <div class="club-name">Edwardsville Gun Club</div>
+                    <div class="club-tagline">Thursday League (Proof-of-Concept)</div>
+                </div>
+            </div>
+        </a>
+    </header>
+
+
+
+    <h1>Squad Dashboard</h1>
+
+    <section class="card">
+        <div><strong>Squad:</strong> <span id="squadName"></span></div>
+        <div><strong>Opponent:</strong> <span id="opponentName"></span></div>
+        <div><strong>Date:</strong> <span id="scheduledDate"></span></div>
+        <div><strong>Time:</strong> <span id="scheduledTime"></span></div>
+        <div><strong>Trap:</strong> <span id="trapNumber"></span></div>
+        <div><strong>Singles Handicap:</strong> <span id="singlesHandicap"></span></div>
+        <div><strong>Handicap Yardage:</strong> <span id="handicapYardage"></span></div>
+    </section>
+
+
+    <section class="card">
+        <h2>Shooter Order</h2>
+        <ul id="postList"></ul>
+    </section>
+
+    <section class="card">
+        <h2>Scores</h2>
+
+        <div class="score-row">
+            <div>
+                <strong>Singles (16 yd)</strong><br>
+                <span id="singlesScore">0 / 125</span>
+            </div>
+            <button id="singlesBtn">Scoresheet</button>
+        </div>
+
+        <div class="score-row">
+            <div>
+                <strong>Handicap</strong><br>
+                <span id="handicapScore">0 / 125</span>
+            </div>
+            <button id="handicapBtn">Scoresheet</button>
+        </div>
+    </section>
+
+    <section class="card">
+        <button id="backBtn">Back to Squad Sheet</button>
+        <button id="submitBtn" class="primary">Submit All Scores</button>
+    </section>
+
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

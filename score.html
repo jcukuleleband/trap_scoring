@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Score Sheet</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- BRANDING HEADER -->
+    <header class="club-header">
+        <a href="index.html" class="club-brand-link">
+            <div class="club-brand">
+                <img src="images/egc-logo.jpg" alt="Club Logo" class="club-logo">
+                <div class="club-text">
+                    <div class="club-name">Edwardsville Gun Club</div>
+                    <div class="club-tagline">Thursday League</div>
+                </div>
+            </div>
+        </a>
+    </header>
+
+    <h1 id="scoreTitle"></h1>
+    <div id="handicapInfo" class="handicap-info"></div>
+
+    <section class="card">
+        <div><strong>Current Shooter:</strong> <span id="currentShooter"></span></div>
+        <div><strong>Post:</strong> <span id="currentPost"></span></div>
+        <div><strong>Target:</strong> <span id="currentTarget"></span> / 25</div>
+    </section>
+
+    <section class="card score-grid-container">
+        <table id="scoreGrid">
+            <thead>
+                <tr>
+                    <th>Shooter</th>
+                    <!-- Shot headers injected by JS -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows injected by JS -->
+            </tbody>
+        </table>
+    </section>
+
+    <section class="card score-controls">
+        <button id="hitBtn" class="primary">HIT</button>
+        <button id="lossBtn" class="secondary">LOSS</button>
+    </section>
+
+    <section class="card">
+        <button id="undoBtn">Undo Last</button>
+        <button id="doneBtn" class="primary">Done / Return</button>
+    </section>
+
+    <script src="js/score.js"></script>
+</body>
+
+</html>

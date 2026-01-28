@@ -1,108 +1,160 @@
-const params = new URLSearchParams(window.location.search);
-const squadId = params.get('squadId');
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const squadId = params.get('squadId');
 
-const MAX_POSTS = 5;
-const STORAGE_KEY = `squad-${squadId}-posts`;
+  const STORAGE_KEY = `squad-${squadId}-posts`;
+  const SINGLES_KEY = `squad-${squadId}-singles`;
+  const HANDICAP_KEY = `squad-${squadId}-handicap`;
 
-let selectedShooters = [];
+  const squadNameEl = document.getElementById('squadName');
+  const postTableBody = document.getElementById('postTable');
+  const errorMsgEl = document.getElementById('errorMsg');
 
-// Load saved data if it exists
-const savedPosts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  const backBtn = document.getElementById('backToIndexBtn');
+  const submitBtn = document.getElementById('submitBtn');
 
-fetch('squads.json')
-  .then(res => res.json())
-  .then(data => {
-    const squad = data.squads.find(s => s.squadId == squadId);
-    document.getElementById('squadName').textContent = squad.squadName;
+  const modal = document.getElementById('confirmModal');
+  const eraseBtn = document.getElementById('eraseBtn');
+  const ignoreBtn = document.getElementById('ignoreBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
 
-    const list = document.getElementById('memberList');
+  // Guard: required elements must exist
+  if (!submitBtn || !backBtn || !postTableBody) {
+    console.error('Squad page missing required elements.');
+    return;
+  }
 
-    squad.members.forEach(member => {
-      const li = document.createElement('li');
+  let pendingSelections = null;
 
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
+  function openModal() {
+    if (!modal) return;
+    modal.classList.remove('hidden');
+  }
 
-      const label = document.createElement('label');
-      label.textContent = member.name + (member.isBlind ? ' (Blind)' : '');
+  function closeModal() {
+    if (!modal) return;
+    modal.classList.add('hidden');
+  }
 
-      // Restore checked state from storage
-      const saved = savedPosts.find(p => p.shooterId === member.id);
-      if (saved) {
-        checkbox.checked = true;
-        selectedShooters[saved.post - 1] = member;
+  function finalizeSubmit(selections) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(selections));
+    closeModal();
+    window.location.href = `dashboard.html?squadId=${squadId}`;
+  }
+
+  // Load squad + build dropdowns
+  fetch('squads.json')
+    .then(res => res.json())
+    .then(data => {
+      const squad = data.squads.find(s => String(s.squadId) === String(squadId));
+      if (!squad) {
+        if (squadNameEl) squadNameEl.textContent = 'Squad not found';
+        return;
       }
 
-      li.onclick = () => {
-        checkbox.checked = !checkbox.checked;
-        handleSelection(member, checkbox);
-      };
+      if (squadNameEl) squadNameEl.textContent = squad.squadName;
 
-      checkbox.onclick = (e) => {
-        e.stopPropagation();
-        handleSelection(member, checkbox);
-      };
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-      li.appendChild(checkbox);
-      li.appendChild(label);
-      list.appendChild(li);
+      // There are 5 rows already in the tbody
+      for (let i = 0; i < 5; i++) {
+        const row = postTableBody.rows[i];
+        if (!row) continue;
+
+        const cell = row.cells[1];
+        cell.innerHTML = ''; // clear
+
+        const select = document.createElement('select');
+
+        const emptyOpt = document.createElement('option');
+        emptyOpt.value = '';
+        emptyOpt.textContent = '-- Select Shooter --';
+        select.appendChild(emptyOpt);
+
+        squad.members.forEach(member => {
+          const opt = document.createElement('option');
+          opt.value = member.id;
+          opt.textContent = member.name + (member.isBlind ? ' (Blind)' : '');
+          select.appendChild(opt);
+        });
+
+        const existing = saved.find(p => p.post === i + 1);
+        if (existing) select.value = existing.shooterId;
+
+        cell.appendChild(select);
+      }
+    })
+    .catch(err => {
+      console.error('Failed to load squads.json', err);
+      if (errorMsgEl) errorMsgEl.textContent = 'Error loading squad data.';
     });
 
-    renderPostTable();
-  });
+  // Submit click
+  submitBtn.addEventListener('click', () => {
+    const rows = postTableBody.querySelectorAll('tr');
+    const selections = [];
+    const seen = new Map(); // shooterId -> shooterName
 
-function handleSelection(member, checkbox) {
-  if (checkbox.checked) {
-    if (selectedShooters.includes(member)) return;
+    for (let i = 0; i < rows.length; i++) {
+      const select = rows[i].querySelector('select');
+      if (!select) continue;
 
-    if (selectedShooters.filter(Boolean).length >= MAX_POSTS) {
-      checkbox.checked = false;
+      const shooterId = select.value;
+      if (!shooterId) continue;
+
+      const shooterName = select.options[select.selectedIndex].text;
+
+      if (seen.has(shooterId)) {
+        if (errorMsgEl) {
+          errorMsgEl.textContent =
+            `Error: "${shooterName}" is assigned to more than one post.`;
+        }
+        return;
+      }
+
+      seen.set(shooterId, shooterName);
+      selections.push({ post: i + 1, shooterId, name: shooterName });
+    }
+
+    if (errorMsgEl) errorMsgEl.textContent = '';
+
+    const hasScores =
+      localStorage.getItem(SINGLES_KEY) || localStorage.getItem(HANDICAP_KEY);
+
+    if (hasScores && modal && eraseBtn && ignoreBtn && cancelBtn) {
+      pendingSelections = selections;
+      openModal();
       return;
     }
 
-    // Put shooter in first open post
-    const openIndex = selectedShooters.findIndex(s => !s);
-    selectedShooters[openIndex === -1 ? selectedShooters.length : openIndex] = member;
-  } else {
-    selectedShooters = selectedShooters.map(s =>
-      s && s.id === member.id ? null : s
-    );
+    // If no scores exist OR modal isn't available, proceed normally
+    finalizeSubmit(selections);
+  });
+
+  // Modal buttons
+  if (eraseBtn) {
+    eraseBtn.addEventListener('click', () => {
+      localStorage.removeItem(SINGLES_KEY);
+      localStorage.removeItem(HANDICAP_KEY);
+      if (pendingSelections) finalizeSubmit(pendingSelections);
+    });
   }
 
-  renderPostTable();
-}
+  if (ignoreBtn) {
+    ignoreBtn.addEventListener('click', () => {
+      if (pendingSelections) finalizeSubmit(pendingSelections);
+    });
+  }
 
-function renderPostTable() {
-  const rows = document.querySelectorAll('#postTable tbody tr');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      pendingSelections = null;
+      closeModal();
+    });
+  }
 
-  rows.forEach((row, index) => {
-    row.cells[1].textContent =
-      selectedShooters[index] ? selectedShooters[index].name : '';
+  // Back button
+  backBtn.addEventListener('click', () => {
+    window.location.href = 'index.html';
   });
-}
-
-document.getElementById('clearBtn').onclick = () => {
-  selectedShooters = [];
-
-  document
-    .querySelectorAll('#memberList input[type="checkbox"]')
-    .forEach(cb => cb.checked = false);
-
-  localStorage.removeItem(STORAGE_KEY);
-  renderPostTable();
-};
-
-document.getElementById('submitBtn').onclick = () => {
-  const payload = selectedShooters
-    .map((shooter, index) => shooter && ({
-      post: index + 1,
-      shooterId: shooter.id,
-      name: shooter.name,
-      isBlind: shooter.isBlind
-    }))
-    .filter(Boolean);
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-
-  window.location.href = 'index.html';
-};
+});

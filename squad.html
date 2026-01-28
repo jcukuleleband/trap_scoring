@@ -1,38 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Squad</title>
+  <title>Squad Setup</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
+
+  <!-- BRANDING HEADER (clickable → home) -->
+  <header class="club-header">
+    <a href="index.html" class="club-brand-link">
+      <div class="club-brand">
+        <img src="images/egc-logo.jpg" alt="Club Logo" class="club-logo">
+        <div class="club-text">
+          <div class="club-name">Edwardsville Gun Club</div>
+          <div class="club-tagline">Thursday League (Proof-of-Concept)</div>
+        </div>
+      </div>
+    </a>
+  </header>
+
 
   <h1 id="squadName"></h1>
 
-  <ul id="memberList"></ul>
-
-  <h2>Post Assignments</h2>
-  <table id="postTable">
+  <table>
     <thead>
       <tr>
         <th>Post</th>
-        <th>Name</th>
+        <th>Shooter</th>
       </tr>
     </thead>
-    <tbody>
-      <tr><td>1</td><td></td></tr>
-      <tr><td>2</td><td></td></tr>
-      <tr><td>3</td><td></td></tr>
-      <tr><td>4</td><td></td></tr>
-      <tr><td>5</td><td></td></tr>
+    <tbody id="postTable">
+      <tr>
+        <td>1</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td></td>
+      </tr>
     </tbody>
   </table>
 
+  <div id="errorMsg" style="color:#b91c1c; margin-top:12px;"></div>
+
   <div class="button-row">
-    <button id="clearBtn">Clear</button>
-    <button id="submitBtn">Submit</button>
+    <button id="backToIndexBtn" class="secondary">Back to Squad List</button>
+    <button id="submitBtn" class="primary">Submit</button>
+  </div>
+
+
+  <!-- Confirm Reset Modal -->
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Existing scores detected</h3>
+      <p>
+        Changing post assignments may invalidate existing scores.
+        What would you like to do?
+      </p>
+  
+      <div class="button-row">
+        <button id="eraseBtn" class="primary">Erase &amp; Continue</button>
+        <button id="ignoreBtn">Ignore &amp; Continue</button>
+        <button id="cancelBtn" class="secondary">Cancel</button>
+      </div>
+    </div>
   </div>
 
   <script src="js/squad.js"></script>
+
 </body>
+
 </html>

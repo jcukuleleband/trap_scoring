@@ -1,0 +1,31 @@
+{
+    "squads": [
+        {
+            "squadName": "Crap Shooters",
+            "date": "2026-05-14",
+            "time": "6:30 PM",
+            "trap": 3,
+            "singlesHandicap": -10,
+            "handicapYardage": 27,
+            "opponent": "DTWASP"
+        },
+        {
+            "squadName": "DTWASP",
+            "date": "2026-05-14",
+            "time": "6:30 PM",
+            "trap": 4,
+            "singlesHandicap": 10,
+            "handicapYardage": 18,
+            "opponent": "Crap Shooters"
+        },
+        {
+            "squadName": "Fumb Ducks",
+            "date": "2026-05-14",
+            "time": "6:30 PM",
+            "trap": 5,
+            "singlesHandicap": 0,
+            "handicapYardage": 22,
+            "opponent": "Bye"
+        }
+    ]
+}
