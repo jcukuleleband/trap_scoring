@@ -8,7 +8,7 @@ self.addEventListener('install', event => {
         '/squads.json',
         '/css/style.css',
         '/js/index.js',
-        '/js/squad.js'
+        '/js/squad.js',
       ]);
     })
   );
