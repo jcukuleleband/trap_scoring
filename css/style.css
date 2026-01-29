@@ -14,6 +14,7 @@ h1 {
   letter-spacing: 0.5px;
 }
 
+
 /* --- Lists --- */
 ul {
   list-style: none;
@@ -30,7 +31,7 @@ li {
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  font-size: 1.1rem;
+  font-size: 1.6rem;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -135,8 +136,8 @@ button:hover {
 }
 
 .club-logo {
-  width: 75px;
-  height: 75px;
+  width: 125px;
+  height: 125px;
   border-radius: 12px;
   object-fit: cover;
   background: #fff;
@@ -145,7 +146,7 @@ button:hover {
 
 .club-name {
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.8rem;
 }
 
 .club-tagline {
@@ -155,6 +156,7 @@ button:hover {
 
 .card {
   background: #fff;
+  font-size: 1.6rem;
   padding: 16px;
   margin-bottom: 16px;
   border-radius: 12px;
@@ -169,23 +171,30 @@ button:hover {
 }
 
 button {
-  padding: 14px;
-  font-size: 1rem;
-  border-radius: 10px;
-  border: none;
+  min-height: 64px;        /* KEY CHANGE */
+  padding: 14px 20px;      /* more vertical padding */
+  font-weight: 700;
+  font-size: 1.6rem;      /* slightly larger text */
+  border-radius: 14px;
   cursor: pointer;
+  line-height: 1.2;
 }
+
 
 button.primary {
   background: #ff7a00;
   color: #fff;
 }
 
+.button-row {
+  align-items: stretch;
+}
+
 /* --- Squad post dropdown styling --- */
 select {
   width: 100%;
   padding: 12px 14px;
-  font-size: 1rem;
+  font-size: 1.6rem;
   border-radius: 10px;
   border: 1px solid #d1d5db;
   background-color: #f9fafb;
@@ -398,4 +407,34 @@ button, td {
   opacity: 0.85;
 }
 
+/* --- Dashboard Scoresheet Buttons --- */
+.scoresheet-btn {
+  min-height: 64px;
+  padding: 16px 20px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  border-radius: 16px;
+  color: #fff;
+  border: none;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+/* Singles = blue */
+.scoresheet-btn.singles {
+  font-size: 1.8rem;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+}
+
+/* Handicap = orange */
+.scoresheet-btn.handicap {
+  font-size: 1.8rem;
+  background: linear-gradient(135deg, #f97316, #c2410c);
+}
+
+/* Tap feedback */
+.scoresheet-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+}
 
