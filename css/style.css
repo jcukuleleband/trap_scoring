@@ -376,3 +376,20 @@ select:focus {
 .modal-content p {
   margin-bottom: 16px;
 }
+
+#editBtn.active {
+  background: #fee2e2;
+  border: 2px solid #b91c1c;
+  font-weight: 700;
+}
+
+/* Prevent double-tap zoom on touch devices */
+body {
+  touch-action: manipulation;
+}
+
+/* Extra safety for interactive elements */
+button, td {
+  touch-action: manipulation;
+}
+
