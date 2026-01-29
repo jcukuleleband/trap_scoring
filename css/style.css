@@ -393,3 +393,9 @@ button, td {
   touch-action: manipulation;
 }
 
+#hapticsToggleBtn {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+

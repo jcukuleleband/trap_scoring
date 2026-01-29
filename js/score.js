@@ -4,6 +4,7 @@
 let editMode = false;
 let savedCursorIndex = null;
 let editTargetIndex = null;
+let hapticsEnabled = localStorage.getItem('hapticsEnabled') !== 'false';
 
 // Prevent double-tap zoom (iOS Safari)
 let lastTouchEnd = 0;
@@ -14,6 +15,36 @@ document.addEventListener('touchend', function (event) {
   }
   lastTouchEnd = now;
 }, { passive: false });
+
+// =====================
+// Haptics
+// =====================
+function haptic(type) {
+  if (!hapticsEnabled) return;
+
+  // Android / Chrome
+  if (navigator.vibrate) {
+    if (type === 'hit') {
+      navigator.vibrate(15);
+    } else if (type === 'loss') {
+      navigator.vibrate([30, 20, 30]);
+    } else if (type === 'undo') {
+      navigator.vibrate([10, 40, 10]);
+    }
+    return;
+  }
+
+  // iOS Safari fallback (best-effort)
+  try {
+    if (window.AudioContext) {
+      new AudioContext().resume();
+    }
+  } catch (e) {
+    // silently ignore
+  }
+}
+
+
 
 
 const params = new URLSearchParams(window.location.search);
@@ -244,8 +275,16 @@ function applyResult(result) {
   renderGrid();
 }
 
-document.getElementById('hitBtn').onclick = () => applyResult('H');
-document.getElementById('lossBtn').onclick = () => applyResult('L');
+document.getElementById('hitBtn').onclick = () => {
+  haptic('hit');
+  applyResult('H');
+};
+
+document.getElementById('lossBtn').onclick = () => {
+  haptic('loss');
+  applyResult('L');
+};
+
 
 document.getElementById('undoBtn').onclick = () => {
   if (editMode) return;
@@ -258,6 +297,27 @@ document.getElementById('undoBtn').onclick = () => {
 document.getElementById('doneBtn').onclick = () => {
   window.location.href = `dashboard.html?squadId=${squadId}`;
 };
+
+const hapticsBtn = document.getElementById('hapticsToggleBtn');
+
+function updateHapticsButton() {
+  hapticsBtn.textContent =
+    `Haptics: ${hapticsEnabled ? 'On' : 'Off'}`;
+}
+
+updateHapticsButton();
+
+hapticsBtn.onclick = () => {
+  hapticsEnabled = !hapticsEnabled;
+  localStorage.setItem('hapticsEnabled', hapticsEnabled);
+  updateHapticsButton();
+
+  // Optional confirmation pulse when turning ON
+  if (hapticsEnabled) {
+    haptic('hit');
+  }
+};
+
 
 // =====================
 // Edit Mode Toggle
