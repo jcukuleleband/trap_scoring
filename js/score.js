@@ -53,9 +53,11 @@ const eventType = params.get('event'); // singles | handicap
 
 const postKey = `squad-${squadId}-posts`;
 const scoreKey = `squad-${squadId}-${eventType}`;
+const reviewKey = `squad-${squadId}-${eventType}-review`;
 
 const posts = JSON.parse(localStorage.getItem(postKey)) || [];
 let shots = JSON.parse(localStorage.getItem(scoreKey)) || [];
+let reviewStates = JSON.parse(localStorage.getItem(reviewKey)) || [];
 
 const SHOTS_PER_SHOOTER = 25;
 const TOTAL_POSTS = posts.length;
@@ -140,10 +142,23 @@ posts.forEach((post, rowIndex) => {
     td.dataset.col = col;
 
     td.addEventListener('click', () => {
-      if (!editMode) return;
+      const shotIndex = col * TOTAL_POSTS + rowIndex;
 
-      editTargetIndex = col * TOTAL_POSTS + rowIndex;
-      renderGrid();
+      if (editMode) {
+        // Edit mode: modify score value, do not toggle review state
+        editTargetIndex = shotIndex;
+        renderGrid();
+      } else {
+        // Normal mode: toggle review state, do not modify score
+        if (shotIndex < shots.length) {
+          if (!reviewStates[shotIndex]) {
+            reviewStates[shotIndex] = false;
+          }
+          reviewStates[shotIndex] = !reviewStates[shotIndex];
+          save();
+          renderGrid();
+        }
+      }
     });
 
     tr.appendChild(td);
@@ -171,6 +186,7 @@ function getCursor() {
 
 function save() {
   localStorage.setItem(scoreKey, JSON.stringify(shots));
+  localStorage.setItem(reviewKey, JSON.stringify(reviewStates));
 }
 
 // =====================
@@ -180,6 +196,7 @@ function renderGrid() {
   document.querySelectorAll('#scoreGrid td[data-col]').forEach(td => {
     td.textContent = '';
     td.classList.remove('active');
+    td.classList.remove('review');
   });
 
   document.querySelectorAll('#scoreGrid td.total-col').forEach(td => {
@@ -196,6 +213,11 @@ function renderGrid() {
     if (!cell) return;
 
     cell.textContent = result === 'H' ? 'X' : 'O';
+
+    // Apply review styling if marked
+    if (reviewStates[index]) {
+      cell.classList.add('review');
+    }
 
     if (result === 'H') {
       const totalCell = document.querySelector(
@@ -296,6 +318,12 @@ document.getElementById('undoBtn').onclick = () => {
 
 document.getElementById('doneBtn').onclick = () => {
   window.location.href = `dashboard.html?squadId=${squadId}`;
+};
+
+document.getElementById('clearReviewBtn').onclick = () => {
+  reviewStates = [];
+  save();
+  renderGrid();
 };
 
 const hapticsBtn = document.getElementById('hapticsToggleBtn');
