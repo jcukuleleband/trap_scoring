@@ -31,6 +31,10 @@
 
 - **T3-1.1.1** The system shall display 25 shot boxes per shooter.
 - **T3-1.1.2** Each shot box shall cycle `blank → X → O` on tap.
+- **T3-3.1.3** The system shall allow a scorer to mark an individual shot cell as “review required” when Edit mode is not active.
+- **T3-3.1.4** When Edit mode is active, tapping a shot cell shall modify the score value and shall not toggle review state.
+- **T3-3.1.5** When Edit mode is not active, tapping a shot cell shall toggle its review state without modifying its score value.
+- **T3-3.1.6** The system shall provide a method to clear all review states for the active scorecard.
 
 ## 3.2 Scoring Accuracy
 
@@ -73,6 +77,11 @@
 ## 4.3 User Interface Implementation
 
 - **T4-3.1.1.1** CSS shall define minimum width and height of 48px for shot cells.
+- **T4-3.1.2.1** The system shall maintain an application-level Edit mode state.
+- **T4-3.1.2.2** Each shot cell shall maintain an independent review-state flag.
+- **T4-3.1.2.3** The event handler for shot cell selection shall branch behavior based on Edit mode state.
+- **T4-3.1.2.4** The review-state flag shall not alter the stored score value.
+- **T4-3.1.2.5** The system shall provide a control to clear all review-state flags for the active squad.
 
 ## 4.4 Squad Configuration
 
@@ -92,17 +101,7 @@
 
 # 5. Requirements Traceability & Verification Matrix
 
-| Tier 1 | Tier 2 | Tier 3 | Tier 4 | Verification Method |
-|--------|--------|--------|--------|---------------------|
-| T1-1 | T2-1.1 | T3-1.1.1 | T4-1.1.1.1 | Demo |
-| T1-1 | T2-1.1 | T3-1.1.2 | T4-1.1.2.1 | Demo |
-| T1-2 | T2-2.1 | T3-2.1.1 | T4-2.1.1.1 | Analysis |
-| T1-3 | T2-3.1 | T3-3.1.1 | T4-3.1.1.1 | Inspection |
-| T1-3 | T2-3.1 | T3-3.1.2 | — | Inspection |
-| T1-4 | T2-4.1 | T3-4.1.1 | T4-4.1.1.1 | Demo |
-| T1-4 | T2-4.2 | T3-4.2.1–3 | — | Inspection |
-| T1-5 | T2-5.1 | T3-5.1.1–2 | T4-5.1.1–3 | Demo |
-| T1-6 | T2-6.1 | T3-6.1.1 | T4-6.1.1.1 | Inspection |
+N/A
 
 ---
 
