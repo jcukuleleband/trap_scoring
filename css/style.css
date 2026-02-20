@@ -318,6 +318,12 @@ select:focus {
   outline: 2px solid #ff7a00;
 }
 
+#scoreGrid td.review {
+  background: #fecaca;
+  border: 2px dashed #dc2626;
+  font-weight: 700;
+}
+
 /* --- Post rotation separators (after shots 5, 10, 15, 20) --- */
 
 /* Header separators */
