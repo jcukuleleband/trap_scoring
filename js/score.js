@@ -190,6 +190,49 @@ function save() {
 }
 
 // =====================
+// Round Detection & Summary
+// =====================
+function getCompletedRounds() {
+  // A round is complete when we have 5 shots per shooter (TOTAL_POSTS shooters)
+  const shotsPerRound = TOTAL_POSTS * 5;
+  const numCompleteRounds = Math.floor(shots.length / shotsPerRound);
+  return numCompleteRounds;
+}
+
+function getRoundTotals(roundIndex) {
+  // roundIndex is 0-based (0 = first round, 1 = second round, etc)
+  const shotsPerRound = TOTAL_POSTS * 5;
+  const startIndex = roundIndex * shotsPerRound;
+  const endIndex = startIndex + shotsPerRound;
+
+  const roundShots = shots.slice(startIndex, endIndex);
+  
+  // Calculate totals per shooter
+  const totals = [];
+  for (let shooterIndex = 0; shooterIndex < TOTAL_POSTS; shooterIndex++) {
+    let total = 0;
+    // Check 5 shots for this shooter in this round
+    for (let shotNum = 0; shotNum < 5; shotNum++) {
+      const index = shotNum * TOTAL_POSTS + shooterIndex;
+      if (index < roundShots.length && roundShots[index] === 'H') {
+        total++;
+      }
+    }
+    totals.push(total);
+  }
+  
+  return totals;
+}
+
+function getLatestCompletedRoundTotals() {
+  const completedRounds = getCompletedRounds();
+  if (completedRounds === 0) {
+    return null;
+  }
+  return getRoundTotals(completedRounds - 1);
+}
+
+// =====================
 // Render
 // =====================
 function renderGrid() {
@@ -343,6 +386,53 @@ hapticsBtn.onclick = () => {
   // Optional confirmation pulse when turning ON
   if (hapticsEnabled) {
     haptic('hit');
+  }
+};
+
+
+// =====================
+// Round Summary Modal
+// =====================
+function showRoundSummary() {
+  const roundTotals = getLatestCompletedRoundTotals();
+  const modal = document.getElementById('roundSummaryModal');
+  const content = document.getElementById('roundSummaryContent');
+
+  if (!roundTotals) {
+    content.innerHTML = '<p style="text-align: center; color: #6b7280;">No completed rounds yet.</p>';
+    modal.classList.remove('hidden');
+    return;
+  }
+
+  // Build table with shooter names and their round totals
+  let tableHTML = '<table class="round-summary-table"><thead><tr><th>Shooter</th><th>Round Total</th></tr></thead><tbody>';
+  
+  posts.forEach((post, index) => {
+    tableHTML += `<tr><td>${post.name}</td><td>${roundTotals[index]}</td></tr>`;
+  });
+  
+  tableHTML += '</tbody></table>';
+  content.innerHTML = tableHTML;
+  modal.classList.remove('hidden');
+}
+
+function closeRoundSummary() {
+  const modal = document.getElementById('roundSummaryModal');
+  modal.classList.add('hidden');
+}
+
+document.getElementById('showRoundSummaryBtn').onclick = () => {
+  showRoundSummary();
+};
+
+document.getElementById('closeRoundSummaryBtn').onclick = () => {
+  closeRoundSummary();
+};
+
+// Close modal when clicking outside of it
+document.getElementById('roundSummaryModal').onclick = (e) => {
+  if (e.target.id === 'roundSummaryModal') {
+    closeRoundSummary();
   }
 };
 

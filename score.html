@@ -51,13 +51,27 @@
         <button id="lossBtn" class="secondary">LOSS</button>
     </section>
 
-    <section class="card">
+    <section class="card button-group">
         <button id="hapticsToggleBtn">Haptics: On</button>
-        <button id="undoBtn">Undo Last</button>
+        <button id="undoBtn">Undo Last Score</button>
         <button id="clearReviewBtn">Clear Review Marks</button>
-        <button id="editBtn">Edit</button>
+        <button id="showRoundSummaryBtn">Show Round Summary</button>
+        <button id="editBtn">Toggle Edit</button>
         <button id="doneBtn" class="primary">Done / Return</button>
     </section>
+
+    <!-- Round Summary Modal -->
+    <div id="roundSummaryModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Round Summary</h3>
+                <button id="closeRoundSummaryBtn" class="close-btn">&times;</button>
+            </div>
+            <div id="roundSummaryContent">
+                <!-- Content injected by JS -->
+            </div>
+        </div>
+    </div>
 
     <script src="js/score.js"></script>
 </body>

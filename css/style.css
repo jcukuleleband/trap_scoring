@@ -360,6 +360,19 @@ select:focus {
   color: #374151;
 }
 
+/* --- Uniform Button Group --- */
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.button-group button {
+  flex: 1;
+  min-height: 56px;
+  font-size: 0.9rem;
+}
+
 /* --- Modal --- */
 .modal {
   position: fixed;
@@ -390,6 +403,68 @@ select:focus {
 
 .modal-content p {
   margin-bottom: 16px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 12px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #0b3d91;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+  min-height: auto;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:active {
+  color: #1f2937;
+}
+
+.round-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 1.1rem;
+}
+
+.round-summary-table th,
+.round-summary-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.round-summary-table th {
+  background: #f3f4f6;
+  font-weight: 600;
+  color: #0b3d91;
+}
+
+.round-summary-table td {
+  text-align: center;
+}
+
+.round-summary-table tr:last-child td {
+  border-bottom: none;
 }
 
 #editBtn.active {

@@ -35,6 +35,11 @@
 - **T3-3.1.4** When Edit mode is active, tapping a shot cell shall modify the score value and shall not toggle review state.
 - **T3-3.1.5** When Edit mode is not active, tapping a shot cell shall toggle its review state without modifying its score value.
 - **T3-3.1.6** The system shall provide a method to clear all review states for the active scorecard.
+- **T3-3.1.7** The system shall detect completion of a round defined as five shots recorded for each shooter in the current squad.
+- **T3-3.1.8** The system shall compute per-shooter totals for each completed round.
+- **T3-3.1.9** The system shall present per-shooter round totals in the order in which the squad shot.
+- **T3-3.1.10** The system shall provide a user-activated control to display the most recently completed round summary.
+- **T3-3.1.11** The system shall display the most recently completed round when the round summary control is activated.
 
 ## 3.2 Scoring Accuracy
 
@@ -82,6 +87,11 @@
 - **T4-3.1.2.3** The event handler for shot cell selection shall branch behavior based on Edit mode state.
 - **T4-3.1.2.4** The review-state flag shall not alter the stored score value.
 - **T4-3.1.2.5** The system shall provide a control to clear all review-state flags for the active squad.
+- **T4-3.1.7.1** The system shall compute round totals by summing shot indices corresponding to each completed five-shot segment.
+- **T4-3.1.7.2** The system shall render a user-visible summary interface element displaying computed round totals.
+- **T4-3.1.7.3** The system shall preserve squad shooting order when rendering round totals.
+- **T4-3.1.7.4** The system shall provide a user control to show and dismiss the round summary interface element.
+- **T4-3.1.7.5** The system shall disable or provide user feedback if no completed round exists when the summary control is activated.
 
 ## 4.4 Squad Configuration
 
