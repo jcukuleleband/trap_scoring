@@ -4,7 +4,7 @@
 let editMode = false;
 let savedCursorIndex = null;
 let editTargetIndex = null;
-let hapticsEnabled = localStorage.getItem('hapticsEnabled') !== 'false';
+let nonVisualFeedbackEnabled = localStorage.getItem('nonVisualFeedbackEnabled') !== 'false';
 
 // Prevent double-tap zoom (iOS Safari)
 let lastTouchEnd = 0;
@@ -17,30 +17,130 @@ document.addEventListener('touchend', function (event) {
 }, { passive: false });
 
 // =====================
-// Haptics
+// Non-Visual Feedback System
 // =====================
-function haptic(type) {
-  if (!hapticsEnabled) return;
 
-  // Android / Chrome
-  if (navigator.vibrate) {
-    if (type === 'hit') {
-      navigator.vibrate(15);
-    } else if (type === 'loss') {
-      navigator.vibrate([30, 20, 30]);
-    } else if (type === 'undo') {
-      navigator.vibrate([10, 40, 10]);
+// Detect device capabilities
+const feedback = {
+  supportsHaptics: () => {
+    return !!(navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate);
+  },
+  
+  supportsAudio: () => {
+    return !!(window.AudioContext || window.webkitAudioContext);
+  },
+
+  audioContext: null,
+
+  initAudioContext: function() {
+    if (this.audioContext) return;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      this.audioContext = new AudioContextClass();
     }
-    return;
+  },
+
+  // Generate hit feedback (short, high-pitched tone + quick vibration)
+  hit: function() {
+    if (!nonVisualFeedbackEnabled) return;
+
+    // Haptic feedback for hit
+    if (this.supportsHaptics()) {
+      const vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+      if (vibrate) vibrate.call(navigator, 20); // Single short vibration
+    }
+
+    // Audio feedback for hit
+    if (this.supportsAudio()) {
+      this.playTone(800, 100, 0.2); // 800Hz, 100ms, moderate volume
+    }
+  },
+
+  // Generate loss/miss feedback (longer, lower-pitched tone + pattern vibration)
+  miss: function() {
+    if (!nonVisualFeedbackEnabled) return;
+
+    // Haptic feedback for miss (double pattern)
+    if (this.supportsHaptics()) {
+      const vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+      if (vibrate) vibrate.call(navigator, [30, 20, 30]); // Pattern: on-off-on
+    }
+
+    // Audio feedback for miss
+    if (this.supportsAudio()) {
+      this.playTone(400, 200, 0.2); // 400Hz, 200ms, moderate volume
+    }
+  },
+
+  // Generate undo feedback
+  undo: function() {
+    if (!nonVisualFeedbackEnabled) return;
+
+    // Haptic feedback for undo
+    if (this.supportsHaptics()) {
+      const vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+      if (vibrate) vibrate.call(navigator, [10, 40, 10]); // Distinct pattern
+    }
+
+    // Audio feedback for undo
+    if (this.supportsAudio()) {
+      this.playTone(600, 80, 0.15); // 600Hz, 80ms, lower volume
+    }
+  },
+
+  // Play a tone using Web Audio API
+  playTone: async function(frequency, durationMs, volume = 0.2) {
+    try {
+      this.initAudioContext();
+      if (!this.audioContext) return;
+
+      // Resume audio context if suspended (must be done in user gesture)
+      if (this.audioContext.state === 'suspended') {
+        try {
+          await this.audioContext.resume();
+        } catch (e) {
+          // If resume fails, abort playing
+          console.debug('AudioContext resume failed:', e && e.message);
+          return;
+        }
+      }
+
+      const ctx = this.audioContext;
+      const now = ctx.currentTime;
+      const durSec = Math.max(0.01, durationMs / 1000);
+
+      // Create oscillator for tone
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.frequency.value = frequency;
+      osc.type = 'sine';
+
+      // Apply smooth envelope to avoid clicks
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(volume, now + 0.01);
+      gain.gain.linearRampToValueAtTime(0, now + durSec);
+
+      osc.start(now);
+      osc.stop(now + durSec + 0.02);
+    } catch (e) {
+      // Gracefully degrade if audio fails
+      console.debug('Audio feedback unavailable:', e && e.message);
+    }
   }
+};
 
-  // iOS Safari fallback (best-effort)
-  try {
-    if (window.AudioContext) {
-      new AudioContext().resume();
-    }
-  } catch (e) {
-    // silently ignore
+// Legacy haptic function for backwards compatibility
+function haptic(type) {
+  if (type === 'hit') {
+    feedback.hit();
+  } else if (type === 'loss') {
+    feedback.miss();
+  } else if (type === 'undo') {
+    feedback.undo();
   }
 }
 
@@ -355,6 +455,7 @@ document.getElementById('undoBtn').onclick = () => {
   if (editMode) return;
 
   shots.pop();
+  haptic('undo');
   save();
   renderGrid();
 };
@@ -369,23 +470,44 @@ document.getElementById('clearReviewBtn').onclick = () => {
   renderGrid();
 };
 
-const hapticsBtn = document.getElementById('hapticsToggleBtn');
+const feedbackBtn = document.getElementById('hapticsToggleBtn');
 
-function updateHapticsButton() {
-  hapticsBtn.textContent =
-    `Haptics: ${hapticsEnabled ? 'On' : 'Off'}`;
+function updateFeedbackButton() {
+  const feedbackOptions = [];
+  
+  if (feedback.supportsHaptics()) {
+    feedbackOptions.push('haptic');
+  }
+  if (feedback.supportsAudio()) {
+    feedbackOptions.push('audio');
+  }
+
+  let label = 'Feedback: ';
+  if (nonVisualFeedbackEnabled) {
+    if (feedbackOptions.length === 0) {
+      label += 'On (no device support)';
+    } else if (feedbackOptions.length === 1) {
+      label += feedbackOptions[0].charAt(0).toUpperCase() + feedbackOptions[0].slice(1);
+    } else {
+      label += feedbackOptions.map(f => f.charAt(0).toUpperCase() + f.slice(1)).join(' + ');
+    }
+  } else {
+    label += 'Off';
+  }
+  
+  feedbackBtn.textContent = label;
 }
 
-updateHapticsButton();
+updateFeedbackButton();
 
-hapticsBtn.onclick = () => {
-  hapticsEnabled = !hapticsEnabled;
-  localStorage.setItem('hapticsEnabled', hapticsEnabled);
-  updateHapticsButton();
+feedbackBtn.onclick = () => {
+  nonVisualFeedbackEnabled = !nonVisualFeedbackEnabled;
+  localStorage.setItem('nonVisualFeedbackEnabled', nonVisualFeedbackEnabled);
+  updateFeedbackButton();
 
-  // Optional confirmation pulse when turning ON
-  if (hapticsEnabled) {
-    haptic('hit');
+  // Confirmation feedback when turning ON
+  if (nonVisualFeedbackEnabled) {
+    feedback.hit();
   }
 };
 

@@ -40,6 +40,10 @@
 - **T3-3.1.9** The system shall present per-shooter round totals in the order in which the squad shot.
 - **T3-3.1.10** The system shall provide a user-activated control to display the most recently completed round summary.
 - **T3-3.1.11** The system shall display the most recently completed round when the round summary control is activated.
+- **T3-3.1.12** The system shall provide non-visual feedback when a hit or miss score entry is recorded.
+- **T3-3.1.13** The non-visual feedback for hit and miss shall be distinguishable from one another.
+- **T3-3.1.14** The system shall allow the user to enable or disable non-visual feedback.
+- **T3-3.1.15** Non-visual feedback may include audible signals, haptic signals, or both.
 
 ## 3.2 Scoring Accuracy
 
@@ -65,6 +69,13 @@
 ## 3.6 Licensing
 
 - **T3-6.1.1** The system shall display copyright and license notice in the UI.
+
+
+
+
+
+
+
 
 ---
 
@@ -92,6 +103,13 @@
 - **T4-3.1.7.3** The system shall preserve squad shooting order when rendering round totals.
 - **T4-3.1.7.4** The system shall provide a user control to show and dismiss the round summary interface element.
 - **T4-3.1.7.5** The system shall disable or provide user feedback if no completed round exists when the summary control is activated.
+### Hit/Miss Non-Visual Feedback Implementation
+- **T4-3.1.12.1** The system shall attempt to generate a non-visual feedback signal upon recording a hit score entry.
+- **T4-3.1.12.2** The system shall attempt to generate a non-visual feedback signal upon recording a miss score entry.
+- **T4-3.1.12.3** The non-visual feedback signals for hit and miss shall be programmatically distinguishable.
+- **T4-3.1.12.4** The system shall detect device support for non-visual feedback capabilities and degrade gracefully if unsupported.
+- **T4-3.1.12.5** The system shall provide a user-configurable control to enable or disable non-visual feedback.
+
 
 ## 4.4 Squad Configuration
 
