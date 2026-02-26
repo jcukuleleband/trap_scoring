@@ -133,6 +133,29 @@ const feedback = {
   }
 };
 
+// Unlock/resume AudioContext on first user gesture (required by iOS Safari)
+(function unlockAudioOnUserGesture() {
+  if (!feedback.supportsAudio()) return;
+
+  const unlock = () => {
+    try {
+      feedback.initAudioContext();
+      if (feedback.audioContext && feedback.audioContext.state === 'suspended') {
+        // Call resume without awaiting to keep this inside the user gesture
+        feedback.audioContext.resume().catch(() => {});
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    window.removeEventListener('touchstart', unlock, { passive: true });
+    window.removeEventListener('mousedown', unlock);
+  };
+
+  window.addEventListener('touchstart', unlock, { passive: true });
+  window.addEventListener('mousedown', unlock);
+})();
+
 // Legacy haptic function for backwards compatibility
 function haptic(type) {
   if (type === 'hit') {
