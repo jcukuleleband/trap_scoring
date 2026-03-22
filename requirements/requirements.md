@@ -61,10 +61,15 @@
 - **T3-4.2.2** The system shall display squad date.
 - **T3-4.2.3** The system shall display squad time.
 
+### 3.4.3 Squad Data Offline Access
+- **T3-4.3.1** The system shall store squad metadata locally on the device for offline access.
+- **T3-4.3.2** The system shall restore and display stored squad metadata upon reload without requiring an active internet connection.
+
 ## 3.5 Data Persistence
 
 - **T3-5.1.1** The system shall store scoring data locally on the device.
 - **T3-5.1.2** The system shall restore stored scores upon reload.
+- **T3-5.1.3** The system shall warn the scorer if persistent data is older than 1 day and should be updated.
 
 ## 3.6 Licensing
 
@@ -120,6 +125,10 @@
 - **T4-5.1.1.1** Score persistence shall use the browser `localStorage` API.
 - **T4-5.1.2.1** Scores shall be serialized using `JSON.stringify()` and restored using `JSON.parse()`.
 - **T4-5.1.3.1** A service worker shall cache core application files for offline operation.
+
+### 4.5.1 Squad Data Offline Caching
+- **T4-5.1.4.1** Squad metadata files (e.g., JSON data structures) shall be cached by the service worker for offline operation.
+- **T4-5.1.4.2** Squad selection shall not initiate network requests and shall rely solely on cached or locally stored data when offline.
 
 ## 4.6 Licensing Implementation
 

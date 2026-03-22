@@ -42,9 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = `dashboard.html?squadId=${squadId}`;
   }
 
-  // Load squad + build dropdowns
-  fetch('squads.json')
-    .then(res => res.json())
+  // Load squad + build dropdowns with offline fallback capability (T4-5.1.4.2)
+  loadSquadsWithOfflineFallback()
     .then(data => {
       const squad = data.squads.find(s => String(s.squadId) === String(squadId));
       if (!squad) {
@@ -85,8 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
     .catch(err => {
-      console.error('Failed to load squads.json', err);
-      if (errorMsgEl) errorMsgEl.textContent = 'Error loading squad data.';
+      console.error('Failed to load squad data:', err);
+      if (errorMsgEl) {
+        errorMsgEl.textContent = 'Error loading squad data: ' + err.message;
+      }
     });
 
   // Submit click
