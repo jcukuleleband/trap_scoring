@@ -307,9 +307,16 @@ function getCursor() {
   };
 }
 
+function updateSaveStatus() {
+  const statusEl = document.getElementById('saveStatus');
+  if (!statusEl) return;
+  statusEl.textContent = 'Score progress is saved locally on this device.';
+}
+
 function save() {
   localStorage.setItem(scoreKey, JSON.stringify(shots));
   localStorage.setItem(reviewKey, JSON.stringify(reviewStates));
+  updateSaveStatus();
 }
 
 // =====================
@@ -483,7 +490,13 @@ document.getElementById('undoBtn').onclick = () => {
   renderGrid();
 };
 
+document.getElementById('printBtn').onclick = () => {
+  save();
+  window.print();
+};
+
 document.getElementById('doneBtn').onclick = () => {
+  save();
   window.location.href = `dashboard.html?squadId=${squadId}`;
 };
 

@@ -5,17 +5,20 @@ const postKey = `squad-${squadId}-posts`;
 const singlesKey = `squad-${squadId}-singles`;
 const handicapKey = `squad-${squadId}-handicap`;
 
+let squadMetadata = null;
+let posts = [];
+
 // ---- Load squad first (required) ----
 fetch('squads.json')
     .then(res => res.json())
     .then(squadData => {
-        const squad = squadData.squads.find(s => s.squadId == squadId);
-        if (!squad) return;
+        squadMetadata = squadData.squads.find(s => s.squadId == squadId);
+        if (!squadMetadata) return;
 
-        document.getElementById('squadName').textContent = squad.squadName;
+        document.getElementById('squadName').textContent = squadMetadata.squadName;
 
         // ---- Load shooter order (ALWAYS) ----
-        const posts = JSON.parse(localStorage.getItem(postKey)) || [];
+        posts = JSON.parse(localStorage.getItem(postKey)) || [];
         const postList = document.getElementById('postList');
         postList.innerHTML = '';
 
@@ -28,6 +31,9 @@ fetch('squads.json')
         // ---- Load scores ----
         updateScoreDisplay();
 
+        // ---- Prepare print report content ----
+        renderPrintReport();
+
         // ---- Load schedule (OPTIONAL) ----
         fetch('data/schedule.json')
             .then(res => res.json())
@@ -37,7 +43,7 @@ fetch('squads.json')
 
                 const schedule =
                     scheduleData.squads.find(s =>
-                        normalize(s.squadName) === normalize(squad.squadName)
+                        normalize(s.squadName) === normalize(squadMetadata.squadName)
                     ) || {};
 
                 applySchedule(schedule);
@@ -89,6 +95,66 @@ function countHits(shots) {
     return shots.filter(s => s === 'H').length;
 }
 
+function formatShotCell(value) {
+    if (value === 'H') return 'X';
+    if (value === 'L') return 'O';
+    return '';
+}
+
+function buildEventScoreTable(eventName, shots) {
+    const totalShots = 25;
+    const shooterCount = posts.length;
+    const rows = [];
+
+    if (shooterCount === 0) {
+        return `<div class="print-section"><strong>${eventName}</strong><p>No shooter order available.</p></div>`;
+    }
+
+    let table = `<h3>${eventName}</h3><table class="print-score-table"><thead><tr><th>Shooter</th><th>Total</th>`;
+    for (let shotNum = 1; shotNum <= totalShots; shotNum++) {
+        table += `<th>${shotNum}</th>`;
+    }
+    table += `</tr></thead><tbody>`;
+
+    posts.forEach((post, shooterIndex) => {
+        let total = 0;
+        let row = `<tr><td>${post.name}</td><td>`;
+
+        const shotCells = [];
+        for (let shotNum = 0; shotNum < totalShots; shotNum++) {
+            const scoreIndex = shotNum * shooterCount + shooterIndex;
+            const value = scoreIndex < shots.length ? formatShotCell(shots[scoreIndex]) : '';
+            if (value === 'X') total += 1;
+            shotCells.push(`<td>${value}</td>`);
+        }
+
+        row += `${total}</td>${shotCells.join('')}</tr>`;
+        table += row;
+    });
+
+    table += `</tbody></table>`;
+    return `<div class="print-section">${table}</div>`;
+}
+
+function renderPrintReport() {
+    const reportContainer = document.getElementById('printReportContent');
+    if (!reportContainer) return;
+
+    const singles = JSON.parse(localStorage.getItem(singlesKey)) || [];
+    const handicap = JSON.parse(localStorage.getItem(handicapKey)) || [];
+
+    const singlesSection = buildEventScoreTable('Singles (16 yd)', singles);
+    const handicapSection = buildEventScoreTable('Handicap', handicap);
+
+    reportContainer.innerHTML = `
+        <div class="print-report-header">
+            <h2>${squadMetadata?.squadName || 'Squad Report'}</h2>
+        </div>
+        ${singlesSection}
+        ${handicapSection}
+    `;
+}
+
 
 // ---- Navigation ----
 document.getElementById('singlesBtn').onclick = () => {
@@ -101,6 +167,11 @@ document.getElementById('handicapBtn').onclick = () => {
 
 document.getElementById('backBtn').onclick = () => {
     window.location.href = `squad.html?squadId=${squadId}`;
+};
+
+document.getElementById('printBtn').onclick = () => {
+    renderPrintReport();
+    window.print();
 };
 
 document.getElementById('submitBtn').onclick = () => {

@@ -10,6 +10,7 @@
 - **T1-4** Support multiple squads and traps.
 - **T1-5** Ensure field reliability (offline capable).
 - **T1-6** Maintain commercial control and licensing authority.
+- **T1-7** Provide a physical print capability for completed score sheets so club house printers can be used.
 
 ---
 
@@ -21,6 +22,7 @@
 - **T2-4.1** The system shall support multiple squads selectable at runtime.
 - **T2-4.2** Each squad shall include trap number, date, and time metadata.
 - **T2-5.1** The system shall operate without an active internet connection.
+- **T2-5.2** The system shall support local device storage and browser print workflows for completed score output.
 - **T2-6.1** The system shall include an explicit non-commercial license.
 
 ---
@@ -65,6 +67,14 @@
 
 - **T3-5.1.1** The system shall store scoring data locally on the device.
 - **T3-5.1.2** The system shall restore stored scores upon reload.
+
+## 3.7 Printing and Local Score Output
+
+- **T3-7.1** The system shall provide a print action for completed score sheets.
+- **T3-7.2** The system shall render a print-friendly score sheet that includes squad metadata, shooter names, shot results, and totals.
+- **T3-7.3** The system shall invoke the browser print workflow so the scorer can select a printer on the current network.
+- **T3-7.4** The system shall save completed score data locally on the device for later review.
+- **T3-7.5** The print and save workflow shall work without requiring an active internet connection.
 
 ## 3.6 Licensing
 
@@ -120,6 +130,14 @@
 - **T4-5.1.1.1** Score persistence shall use the browser `localStorage` API.
 - **T4-5.1.2.1** Scores shall be serialized using `JSON.stringify()` and restored using `JSON.parse()`.
 - **T4-5.1.3.1** A service worker shall cache core application files for offline operation.
+
+## 4.7 Printing Implementation
+
+- **T4-7.1.1** The system shall implement score sheet printing using browser print APIs such as `window.print()`.
+- **T4-7.1.2** The printed score sheet shall be styled using print-specific CSS rules for readability on paper.
+- **T4-7.1.3** The print workflow shall allow the user to choose available printers through the browser or device dialog.
+- **T4-7.1.4** The printing workflow shall not require an active internet connection.
+- **T4-7.1.5** Completed score data shall remain available locally after scoring is finished.
 
 ## 4.6 Licensing Implementation
 
